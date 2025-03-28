@@ -1,13 +1,12 @@
-import React from 'react'
-import { ModeToggle } from '@/components/toggle-mode'
+import React from "react";
+import Quote from "@/components/quote";
 
 function Home() {
   return (
-    <div>
-      <h1>Hello World</h1>
-      <ModeToggle />
-    </div>
-  )
+    <main className="container mx-auto px-8 flex flex-col items-center justify-center h-screen">
+      <Quote />
+    </main>
+  );
 }
 
 export default Home;
