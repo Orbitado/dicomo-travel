@@ -6,7 +6,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "../mode-toggle";
+import QuoteForm from "./quote-form";
 
 function Quote() {
   return (
@@ -17,11 +19,11 @@ function Quote() {
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <div className="text-center my-4 md:my-0">
-            <CardTitle className="text-2xl md:text-4xl font-bold">
+          <div className="text-center space-y-2">
+            <CardTitle className="text-2xl md:text-3xl font-bold">
               ¡Bienvenido de nuevo, Dicomo!
             </CardTitle>
-            <CardDescription className="text-base md:text-xl">
+            <CardDescription className="text-base md:text-lg">
               Complete los campos para generar una cotización
             </CardDescription>
           </div>
@@ -30,7 +32,10 @@ function Quote() {
           </div>
         </div>
       </CardHeader>
-      <CardContent></CardContent>
+      <Separator />
+      <CardContent>
+        <QuoteForm />
+      </CardContent>
     </Card>
   );
 }
