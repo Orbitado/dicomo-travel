@@ -15,13 +15,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "../ui/button";
 import { DatePickerWithRange } from "../ui/date-picker-with-range";
+import { TimePicker } from "../ui/time-picker";
+import { useState } from "react";
 
 function QuoteForm() {
+  const [dateRange, setDateRange] = useState<any>(undefined);
+  
   const form = useForm({
     resolver: zodResolver(
       z.object({
         place: z.string().min(1, { message: "El lugar es requerido" }),
         date: z.date().min(new Date(), { message: "La fecha es requerida" }),
+        time: z.date().min(new Date(), { message: "La hora es requerida" }),
       })
     ),
   });
@@ -57,15 +62,37 @@ function QuoteForm() {
             <FormItem>
               <FormLabel>Fecha</FormLabel>
               <FormControl>
-                <DatePickerWithRange
+                <div className="flex-1">
+                  <DatePickerWithRange 
+                    className="w-full"
+                  />
+                  <input 
+                    type="hidden" 
+                    value={field.value?.toISOString() ?? ''} 
+                    onChange={field.onChange} 
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="time"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Hora</FormLabel>
+              <FormControl>
+                <TimePicker
                   selected={field.value}
-                  onChange={(date: any) => field.onChange(date)}
+                  onChange={field.onChange}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
-        />        
+        />
         <Button type="submit">Crear cotización</Button>
       </form>
     </Form>
