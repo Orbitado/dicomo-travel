@@ -13,50 +13,64 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { es } from "date-fns/locale"
 
 export function DatePickerWithRange({
   className,
-}: React.HTMLAttributes<HTMLDivElement>) {
+  onChange,
+}: React.HTMLAttributes<HTMLDivElement> & {
+  onChange?: (date: DateRange | undefined) => void;
+}) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+    from: new Date(),
+    to: addDays(new Date(), 7),
   })
 
+  const handleSelect = (selectedDate: DateRange | undefined) => {
+    setDate(selectedDate)
+    if (onChange) {
+      onChange(selectedDate)
+    }
+  }
+
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("grid gap-2 w-full", className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-normal",
+              "w-full h-12 justify-start text-left font-normal overflow-hidden",
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
-                </>
+            <CalendarIcon className="mr-2 h-5 w-5 shrink-0" />
+            <span className="truncate inline-block max-w-[calc(100%-2rem)]">
+              {date?.from ? (
+                date.to ? (
+                  <>
+                    {format(date.from, "dd 'de' MMMM 'de' yyyy", { locale: es })} -{" "}
+                    {format(date.to, "dd 'de' MMMM 'de' yyyy", { locale: es })}
+                  </>
+                ) : (
+                  format(date.from, "dd 'de' MMMM 'de' yyyy", { locale: es })
+                )
               ) : (
-                format(date.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Pick a date</span>
-            )}
+                <span>Seleccionar fecha</span>
+              )}
+            </span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-fit p-4 max-w-[calc(100vw-2rem)]">
           <Calendar
             initialFocus
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
-            numberOfMonths={2}
+            onSelect={handleSelect}
+            numberOfMonths={1}
+            className="md:p-0"
           />
         </PopoverContent>
       </Popover>

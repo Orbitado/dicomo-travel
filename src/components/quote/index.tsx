@@ -12,7 +12,7 @@ import QuoteForm from "./quote-form";
 
 function Quote() {
   return (
-    <Card className="w-full max-w-7xl">
+    <Card className="p-6 mx-auto max-w-7xl">
       <CardHeader>
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 justify-between">
           <Avatar className="size-16 md:size-24">

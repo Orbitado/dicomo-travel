@@ -92,17 +92,17 @@ export function TimePicker({
           <Button
             variant="outline"
             className={cn(
-              "w-fit justify-start text-left font-normal",
+              "w-full justify-start text-left font-normal border-input bg-background h-12",
               !time && "text-muted-foreground",
               disabled && "opacity-50 cursor-not-allowed"
             )}
           >
             <Clock className="mr-2 h-4 w-4" />
-            {time ? time : <span>Select time</span>}
+            {time ? time : <span>Seleccionar hora</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-32 p-4" side="top">
-          <div className="h-[380px] overflow-y-auto">
+        <PopoverContent className="w-40 p-0" side="top">
+          <div className="h-[300px] overflow-y-auto py-2">
             {timeSlots.map((timeSlot) => (
               <Button
                 key={timeSlot}
@@ -111,7 +111,7 @@ export function TimePicker({
                   handleTimeChange(timeSlot);
                   setOpen(false);
                 }}
-                className="w-fit mb-1"
+                className="w-full justify-center mb-1 rounded-none"
               >
                 {timeSlot}
               </Button>
