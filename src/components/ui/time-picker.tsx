@@ -126,7 +126,7 @@ export function TimePicker({
         value={time}
         disabled={disabled}
         onChange={(e) => handleTimeChange(e.target.value)}
-        className="sr-only"
+        className="sr-only w-fit overflow-hidden"
       />
     </div>
   );
