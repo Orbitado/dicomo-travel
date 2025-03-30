@@ -13,7 +13,7 @@ import { CalendarRange } from "lucide-react";
 
 function Quote() {
   return (
-    <Card className="w-full max-w-4xl mx-auto shadow-lg">
+    <Card className="w-full my-12 sm:my-0 max-w-4xl max-h-fit mx-auto shadow-lg">
       <CardHeader className="pb-4">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 justify-between">
           <Avatar className="size-16 md:size-24">
@@ -34,7 +34,7 @@ function Quote() {
         </div>
       </CardHeader>
       <Separator />
-      <CardContent className="pt-6 pb-2">
+      <CardContent>
         <div className="mb-4 flex items-center gap-2 text-muted-foreground">
           <CalendarRange className="h-5 w-5" />
           <h2 className="text-lg font-medium">Información General</h2>

@@ -92,7 +92,7 @@ export function TimePicker({
           <Button
             variant="outline"
             className={cn(
-              "w-fit justify-start text-left font-normal",
+              "w-full justify-start text-left font-normal",
               !time && "text-muted-foreground",
               disabled && "opacity-50 cursor-not-allowed"
             )}
@@ -102,7 +102,7 @@ export function TimePicker({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-32 p-4" side="top">
-          <div className="h-[380px] overflow-y-auto">
+          <div className="h-64 overflow-y-auto">
             {timeSlots.map((timeSlot) => (
               <Button
                 key={timeSlot}
