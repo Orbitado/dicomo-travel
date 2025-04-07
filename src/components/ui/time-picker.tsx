@@ -92,7 +92,7 @@ export function TimePicker({
           <Button
             variant="outline"
             className={cn(
-              "w-full justify-start text-left font-normal border-input bg-background h-12",
+              "w-full justify-start text-left font-normal",
               !time && "text-muted-foreground",
               disabled && "opacity-50 cursor-not-allowed"
             )}
@@ -101,8 +101,8 @@ export function TimePicker({
             {time ? time : <span>Seleccionar hora</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-40 p-0" side="top">
-          <div className="h-[300px] overflow-y-auto py-2">
+        <PopoverContent className="w-32 p-4" side="top">
+          <div className="h-64 overflow-y-auto">
             {timeSlots.map((timeSlot) => (
               <Button
                 key={timeSlot}
@@ -126,7 +126,7 @@ export function TimePicker({
         value={time}
         disabled={disabled}
         onChange={(e) => handleTimeChange(e.target.value)}
-        className="sr-only"
+        className="sr-only w-fit overflow-hidden"
       />
     </div>
   );

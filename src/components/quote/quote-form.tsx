@@ -5,7 +5,6 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-  FormDescription,
 } from "../ui/form";
 import { Form } from "../ui/form";
 import { Input } from "../ui/input";
@@ -16,35 +15,50 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import { DatePickerWithRange } from "../ui/date-picker-with-range";
 import { TimePicker } from "../ui/time-picker";
-import { Card, CardContent } from "../ui/card";
-import { CalendarRange, Clock, MapPin, Send } from "lucide-react";
-import { addDays, startOfToday, addHours } from "date-fns";
+import { addDays, format, startOfDay } from "date-fns";
+import { es } from "date-fns/locale";
 import { DateRange } from "react-day-picker";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter
+} from "../ui/card";
+import {
+  MapPin,
+  Calendar,
+  Clock,
+  PlaneTakeoff,
+  Send
+} from "lucide-react";
+
+const formSchema = z.object({
+  place: z.string().min(1, { message: "El lugar es requerido" }),
+  dateRange: z.object({
+    from: z.date().min(startOfDay(new Date()), { message: `La fecha de inicio no puede ser anterior a ${format(startOfDay(new Date()), "dd MMMM yyyy", { locale: es })}` }),
+    to: z.date().min(startOfDay(new Date()), { message: `La fecha de fin no puede ser anterior a ${format(startOfDay(new Date()), "dd MMMM yyyy", { locale: es })}` })
+  }),
+  time: z.date().optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 function QuoteForm() {
-  const MIN_DATE = startOfToday();
-  const MAX_DATE = addDays(MIN_DATE, 30);
-  const MIN_TIME = addHours(startOfToday(), 12);
-
-  const form = useForm({
-    resolver: zodResolver(
-      z.object({
-        place: z.string().min(1, { message: "El lugar es requerido" }),
-        date: z.custom<DateRange>(),
-        time: z.date().min(MIN_TIME, { message: "La hora es requerida" }),
-      })
-    ),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      place: "Aeropuerto de Ezeiza",
-      date: {
-        from: MIN_DATE,
-        to: MAX_DATE,
+      place: "Punta Cana, República Dominicana",
+      dateRange: {
+        from: startOfDay(new Date()),
+        to: addDays(startOfDay(new Date()), 1)
       },
-      time: MIN_TIME,
+      time: startOfDay(new Date(new Date().setHours(9, 0, 0, 0))),
     },
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: FormValues) => {
     try {
       console.log("Form data:", data);
       toast.success("Cotización creada correctamente");
@@ -57,100 +71,79 @@ function QuoteForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="shadow-sm">
-            <CardContent className="p-6">
-              <FormField
-                control={form.control}
-                name="place"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel className="flex items-center gap-2 text-xl font-medium">
-                      <MapPin className="size-6" />
-                      Lugar
-                    </FormLabel>
-                    <FormDescription>
-                      Ingrese el destino o lugar del servicio
-                    </FormDescription>
-                    <FormControl>
-                      <Input
-                        placeholder="Ej: Aeropuerto de Ciudad de Ezeiza"
-                        className="w-full h-12"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+        <div className="grid gap-6 md:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="place"
+            render={({ field }) => (
+              <FormItem className="md:col-span-2">
+                <FormLabel className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Lugar de destino
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Ej. Cancún, México"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <Card className="shadow-sm">
-            <CardContent className="p-6">
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel className="flex items-center gap-2 text-xl font-medium">
-                      <CalendarRange className="size-6" />
-                      Fecha
-                    </FormLabel>
-                    <FormDescription>
-                      Seleccione el rango de fechas para el servicio
-                    </FormDescription>
-                    <FormControl>
-                      <DatePickerWithRange
-                        onChange={field.onChange}
-                        className="w-full"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+          <FormField
+            control={form.control}
+            name="dateRange"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Fechas de viaje
+                </FormLabel>
+                <FormControl>
+                  <DatePickerWithRange
+                    onChange={field.onChange}
+                    value={field.value}
+                    className="w-full [&>div]:w-full"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="time"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Hora de reserva
+                </FormLabel>
+                <FormControl>
+                  <TimePicker
+                    selected={field.value}
+                    onChange={field.onChange}
+                    className="w-full"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
-        <Card className="shadow-sm">
-          <CardContent className="p-6">
-            <FormField
-              control={form.control}
-              name="time"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel className="flex items-center gap-2 text-xl font-medium">
-                    <Clock className="size-6" />
-                    Hora
-                  </FormLabel>
-                  <FormDescription>
-                    Seleccione la hora de inicio del servicio
-                  </FormDescription>
-                  <FormControl>
-                    <TimePicker
-                      selected={field.value}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        <div className="flex justify-end">
+        <CardFooter className="flex justify-end px-0 pt-4">
           <Button
             type="submit"
-            className="h-12 px-8 py-5 text-base font-medium cursor-pointer"
-            size="lg"
+            className="w-full md:w-auto flex items-center gap-2"
           >
-            <Send className="mr-2 size-6" />
-            Crear cotización
+            <Send className="h-4 w-4" />
+            Solicitar cotización
           </Button>
-        </div>
+        </CardFooter>
       </form>
     </Form>
   );

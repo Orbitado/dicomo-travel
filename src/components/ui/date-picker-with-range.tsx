@@ -13,25 +13,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { es } from "date-fns/locale"
+import { es } from "date-fns/locale";
 
 export function DatePickerWithRange({
   className,
+  value,
   onChange,
 }: React.HTMLAttributes<HTMLDivElement> & {
-  onChange?: (date: DateRange | undefined) => void;
+  value?: DateRange;
+  onChange?: (date: DateRange) => void;
 }) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 7),
-  })
-
-  const handleSelect = (selectedDate: DateRange | undefined) => {
-    setDate(selectedDate)
-    if (onChange) {
-      onChange(selectedDate)
-    }
-  }
+  const [date, setDate] = React.useState<DateRange | undefined>(value);
 
   return (
     <div className={cn("grid gap-2 w-full", className)}>
@@ -41,36 +33,41 @@ export function DatePickerWithRange({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-full h-12 justify-start text-left font-normal overflow-hidden",
-              !date && "text-muted-foreground"
+              "w-full justify-start text-left font-normal",
+              !date && "text-muted-foreground",
+              "h-12 px-3 overflow-hidden"
             )}
           >
-            <CalendarIcon className="mr-2 h-5 w-5 shrink-0" />
-            <span className="truncate inline-block max-w-[calc(100%-2rem)]">
+            <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+            <div className="overflow-hidden">
               {date?.from ? (
                 date.to ? (
-                  <>
-                    {format(date.from, "dd 'de' MMMM 'de' yyyy", { locale: es })} -{" "}
-                    {format(date.to, "dd 'de' MMMM 'de' yyyy", { locale: es })}
-                  </>
+                  <span className="block truncate text-sm">
+                    {format(date.from, "dd MMM yyyy", { locale: es })} al{" "}
+                    {format(date.to, "dd MMM yyyy", { locale: es })}
+                  </span>
                 ) : (
-                  format(date.from, "dd 'de' MMMM 'de' yyyy", { locale: es })
+                  <span className="block truncate text-sm">
+                    {format(date.from, "dd MMMM yyyy", { locale: es })}
+                  </span>
                 )
               ) : (
-                <span>Seleccionar fecha</span>
+                <span className="block text-sm">Selecciona una fecha</span>
               )}
-            </span>
+            </div>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-fit p-4 max-w-[calc(100vw-2rem)]">
+        <PopoverContent
+          className="w-auto p-0 z-50"
+          sideOffset={5}
+        >
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from}
+            defaultMonth={date?.from || new Date()}
             selected={date}
-            onSelect={handleSelect}
+            onSelect={setDate}
             numberOfMonths={1}
-            className="md:p-0"
           />
         </PopoverContent>
       </Popover>
