@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -8,12 +9,22 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "../mode-toggle";
-import QuoteForm from "./quote-form";
-import { CalendarRange } from "lucide-react";
+import GeneralInformation from "./general-information";
+import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useStore } from "@/store";
+import { formSections } from "./data/form-sections";
+import { ChevronDown, Eye } from "lucide-react";
 
 function Quote() {
+  const { currentStep, setCurrentStep } = useStore();
+
   return (
-    <Card className="w-full my-12 sm:my-0 max-w-4xl max-h-fit mx-auto shadow-lg">
+    <Card className="w-full my-12 sm:my-0 max-w-4xl mx-auto shadow-lg">
       <CardHeader className="pb-4">
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 justify-between">
           <Avatar className="size-16 md:size-24">
@@ -34,12 +45,57 @@ function Quote() {
         </div>
       </CardHeader>
       <Separator />
-      <CardContent>
-        <div className="mb-4 flex items-center gap-2 text-muted-foreground">
-          <CalendarRange className="h-5 w-5" />
-          <h2 className="text-lg font-medium">Información General</h2>
+      <CardContent className="pt-6 space-y-6">
+        {formSections.map((section) => (
+          <Collapsible
+            key={section.id}
+            open={currentStep === section.id}
+            onOpenChange={() => setCurrentStep(section.id)}
+            className="border rounded-md"
+          >
+            <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-left cursor-pointer">
+              <div className="flex items-center gap-2">
+                <section.icon className="h-5 w-5 text-muted-foreground" />
+                <h2 className="text-lg font-medium">{section.title}</h2>
+              </div>
+              <ChevronDown
+                className={`h-5 w-5 transition-transform ${
+                  currentStep === section.id ? "transform rotate-180" : ""
+                }`}
+              />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="px-4 pb-4">
+              {section.id === 1 && <GeneralInformation />}
+              {section.id === 2 && (
+                <div className="py-4 text-center text-muted-foreground">
+                  Contenido de Detalles de los Vuelos
+                </div>
+              )}
+              {section.id === 3 && (
+                <div className="py-4 text-center text-muted-foreground">
+                  Contenido de Servicios Terrestres y Alojamiento
+                </div>
+              )}
+              {section.id === 4 && (
+                <div className="py-4 text-center text-muted-foreground">
+                  Contenido de Detalles de Precios y Condiciones
+                </div>
+              )}
+              {section.id === 5 && (
+                <div className="py-4 text-center text-muted-foreground">
+                  Contenido de Datos de la Agencia
+                </div>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
+        ))}
+
+        <div className="flex justify-center pt-4">
+          <Button className="w-full max-w-md flex items-center gap-2">
+            <Eye className="h-5 w-5" />
+            Generar Cotización
+          </Button>
         </div>
-        <QuoteForm />
       </CardContent>
     </Card>
   );

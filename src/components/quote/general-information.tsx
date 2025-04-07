@@ -12,56 +12,62 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button } from "../ui/button";
 import { DatePickerWithRange } from "../ui/date-picker-with-range";
 import { TimePicker } from "../ui/time-picker";
 import { addDays, format, startOfDay } from "date-fns";
 import { es } from "date-fns/locale";
-import { DateRange } from "react-day-picker";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter
-} from "../ui/card";
-import {
-  MapPin,
-  Calendar,
-  Clock,
-  PlaneTakeoff,
-  Send
-} from "lucide-react";
+import { MapPin, Calendar, Clock, ArrowRight } from "lucide-react";
+import { useStore } from "@/store";
+import { Button } from "../ui/button";
 
-const formSchema = z.object({
-  place: z.string().min(1, { message: "El lugar es requerido" }),
+const generalInformationSchema = z.object({
+  destiny: z.string().min(1, { message: "El lugar es requerido" }),
   dateRange: z.object({
-    from: z.date().min(startOfDay(new Date()), { message: `La fecha de inicio no puede ser anterior a ${format(startOfDay(new Date()), "dd MMMM yyyy", { locale: es })}` }),
-    to: z.date().min(startOfDay(new Date()), { message: `La fecha de fin no puede ser anterior a ${format(startOfDay(new Date()), "dd MMMM yyyy", { locale: es })}` })
+    from: z.date().min(startOfDay(new Date()), {
+      message: `La fecha de inicio no puede ser anterior a ${format(
+        startOfDay(new Date()),
+        "dd MMMM yyyy",
+        { locale: es }
+      )}`,
+    }),
+    to: z.date().min(startOfDay(new Date()), {
+      message: `La fecha de fin no puede ser anterior a ${format(
+        startOfDay(new Date()),
+        "dd MMMM yyyy",
+        { locale: es }
+      )}`,
+    }),
   }),
-  time: z.date().optional(),
+  time: z.date(),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+export type GeneralInformationFormValues = z.infer<
+  typeof generalInformationSchema
+>;
 
-function QuoteForm() {
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+function GeneralInformation() {
+  const { setDestiny, setDateRange, setTime } = useStore();
+  const { currentStep, setCurrentStep } = useStore();
+
+  const form = useForm<GeneralInformationFormValues>({
+    resolver: zodResolver(generalInformationSchema),
     defaultValues: {
-      place: "Punta Cana, República Dominicana",
+      destiny: "Punta Cana, República Dominicana",
       dateRange: {
         from: startOfDay(new Date()),
-        to: addDays(startOfDay(new Date()), 1)
+        to: addDays(startOfDay(new Date()), 1),
       },
-      time: startOfDay(new Date(new Date().setHours(9, 0, 0, 0))),
+      time: new Date(new Date().setHours(9, 0, 0, 0)),
     },
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: GeneralInformationFormValues) => {
     try {
-      console.log("Form data:", data);
-      toast.success("Cotización creada correctamente");
+      setDestiny(data.destiny);
+      setDateRange(data.dateRange);
+      setTime(format(data.time, "HH:mm"));
+      setCurrentStep(currentStep + 1);
+      toast.success("Datos de Información General guardados correctamente");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Error al crear la cotización");
@@ -74,7 +80,7 @@ function QuoteForm() {
         <div className="grid gap-6 md:grid-cols-2">
           <FormField
             control={form.control}
-            name="place"
+            name="destiny"
             render={({ field }) => (
               <FormItem className="md:col-span-2">
                 <FormLabel className="flex items-center gap-2">
@@ -82,10 +88,7 @@ function QuoteForm() {
                   Lugar de destino
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Ej. Cancún, México"
-                    {...field}
-                  />
+                  <Input placeholder="Ej. Cancún, México" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -108,7 +111,16 @@ function QuoteForm() {
                     className="w-full [&>div]:w-full"
                   />
                 </FormControl>
-                <FormMessage />
+                {form.formState.errors.dateRange?.to && (
+                  <p className="text-destructive text-sm">
+                    {form.formState.errors.dateRange.to.message}
+                  </p>
+                )}
+                {form.formState.errors.dateRange?.from && (
+                  <p className="text-destructive text-sm">
+                    {form.formState.errors.dateRange.from.message}
+                  </p>
+                )}
               </FormItem>
             )}
           />
@@ -135,18 +147,13 @@ function QuoteForm() {
           />
         </div>
 
-        <CardFooter className="flex justify-end px-0 pt-4">
-          <Button
-            type="submit"
-            className="w-full md:w-auto flex items-center gap-2"
-          >
-            <Send className="h-4 w-4" />
-            Solicitar cotización
-          </Button>
-        </CardFooter>
+        <Button type="submit" className="w-full cursor-pointer">
+          <ArrowRight className="h-4 w-4" />
+          Continuar
+        </Button>
       </form>
     </Form>
   );
 }
 
-export default QuoteForm;
+export default GeneralInformation;

@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { addDays, format } from "date-fns"
+import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { DateRange } from "react-day-picker"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/cn"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -24,6 +24,13 @@ export function DatePickerWithRange({
   onChange?: (date: DateRange) => void;
 }) {
   const [date, setDate] = React.useState<DateRange | undefined>(value);
+
+  const handleDateSelect = (selectedDate: DateRange | undefined) => {
+    setDate(selectedDate);
+    if (onChange && selectedDate) {
+      onChange(selectedDate);
+    }
+  };
 
   return (
     <div className={cn("grid gap-2 w-full", className)}>
@@ -66,7 +73,7 @@ export function DatePickerWithRange({
             mode="range"
             defaultMonth={date?.from || new Date()}
             selected={date}
-            onSelect={setDate}
+            onSelect={handleDateSelect}
             numberOfMonths={1}
           />
         </PopoverContent>
