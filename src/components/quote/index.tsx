@@ -19,6 +19,7 @@ import {
 import { useStore } from "@/store";
 import { formSections } from "./data/form-sections";
 import { ChevronDown, Eye } from "lucide-react";
+import FlightsDetails from "./flights-details";
 
 function Quote() {
   const { currentStep, setCurrentStep } = useStore();
@@ -66,11 +67,7 @@ function Quote() {
             </CollapsibleTrigger>
             <CollapsibleContent className="px-4 pb-4">
               {section.id === 1 && <GeneralInformation />}
-              {section.id === 2 && (
-                <div className="py-4 text-center text-muted-foreground">
-                  Contenido de Detalles de los Vuelos
-                </div>
-              )}
+              {section.id === 2 && <FlightsDetails />}
               {section.id === 3 && (
                 <div className="py-4 text-center text-muted-foreground">
                   Contenido de Servicios Terrestres y Alojamiento

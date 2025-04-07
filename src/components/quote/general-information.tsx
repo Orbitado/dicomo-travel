@@ -111,14 +111,14 @@ function GeneralInformation() {
                     className="w-full [&>div]:w-full"
                   />
                 </FormControl>
-                {form.formState.errors.dateRange?.to && (
-                  <p className="text-destructive text-sm">
-                    {form.formState.errors.dateRange.to.message}
-                  </p>
-                )}
                 {form.formState.errors.dateRange?.from && (
                   <p className="text-destructive text-sm">
                     {form.formState.errors.dateRange.from.message}
+                  </p>
+                )}
+                {form.formState.errors.dateRange?.to && (
+                  <p className="text-destructive text-sm">
+                    {form.formState.errors.dateRange.to.message}
                   </p>
                 )}
               </FormItem>
