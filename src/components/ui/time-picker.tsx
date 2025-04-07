@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
-
+import { format } from "date-fns";
 interface TimePickerProps {
+  value: Date;
   className?: string;
   label?: string;
   selected?: Date;
@@ -24,6 +25,7 @@ interface TimePickerProps {
 }
 
 export function TimePicker({
+  value,
   className,
   label,
   selected,
@@ -33,12 +35,7 @@ export function TimePicker({
   name,
   disabled,
 }: TimePickerProps) {
-  const defaultTime = selected
-    ? `${selected.getHours().toString().padStart(2, "0")}:${selected
-        .getMinutes()
-        .toString()
-        .padStart(2, "0")}`
-    : "12:00";
+  const defaultTime = value ? format(value, "HH:mm") : "12:00";
 
   const [time, setTime] = useState<string>(defaultTime);
   const [open, setOpen] = useState(false);
