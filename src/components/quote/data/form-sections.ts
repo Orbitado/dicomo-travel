@@ -1,10 +1,10 @@
-import { CreditCard, Info, Plane, UserCircle, Building } from "lucide-react";
+import { CreditCard, UserCircle, Plane, Building } from "lucide-react";
 
 export const formSections = [
   {
     id: 1,
-    title: "Información General",
-    icon: Info,
+    title: "Datos del cliente",
+    icon: UserCircle,
   },
   {
     id: 2,

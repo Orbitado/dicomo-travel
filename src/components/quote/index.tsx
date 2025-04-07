@@ -9,7 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "../mode-toggle";
-import GeneralInformation from "./general-information";
+import CustomerData from "./customer-data";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -66,7 +66,7 @@ function Quote() {
               />
             </CollapsibleTrigger>
             <CollapsibleContent className="px-4 pb-4">
-              {section.id === 1 && <GeneralInformation />}
+              {section.id === 1 && <CustomerData />}
               {section.id === 2 && <FlightsDetails />}
               {section.id === 3 && (
                 <div className="py-4 text-center text-muted-foreground">
