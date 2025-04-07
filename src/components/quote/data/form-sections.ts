@@ -1,4 +1,4 @@
-import { CreditCard, UserCircle, Plane, Building } from "lucide-react";
+import { UserCircle, MapPin, Plane, Building, CreditCard } from "lucide-react";
 
 export const formSections = [
   {
@@ -8,22 +8,22 @@ export const formSections = [
   },
   {
     id: 2,
-    title: "Detalles de los Vuelos",
-    icon: Plane,
+    title: "Itinerario",
+    icon: MapPin,
   },
   {
     id: 3,
-    title: "Servicios Terrestres y Alojamiento",
-    icon: Building,
+    title: "Vuelos",
+    icon: Plane,
   },
   {
     id: 4,
-    title: "Detalles de Precios y Condiciones",
-    icon: CreditCard,
+    title: "Alojamiento",
+    icon: Building,
   },
   {
     id: 5,
-    title: "Datos de la Agencia",
-    icon: UserCircle,
+    title: "Tarifas y Precios",
+    icon: CreditCard,
   },
 ];
