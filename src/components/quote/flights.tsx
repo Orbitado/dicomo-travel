@@ -57,6 +57,23 @@ const flightSchema = z.object({
 
 export type FlightFormValues = z.infer<typeof flightSchema>;
 
+// Custom component to handle the conversion between DateRange and Date
+const DatePickerField = ({ value, onChange }: { value: Date; onChange: (date: Date) => void }) => {
+  return (
+    <DatePickerWithRange
+      value={{ from: value, to: value }}
+      onChange={(date) => {
+        // @ts-expect-error - We know this is a DateRange object
+        if (date?.from) {
+          // @ts-expect-error - We know this is a DateRange object
+          onChange(date.from);
+        }
+      }}
+      className="w-full"
+    />
+  );
+};
+
 function Flights() {
   const {
     setOrigin,
@@ -179,10 +196,9 @@ function Flights() {
                   <Calendar className="h-4 w-4" />
                   Fechas del viaje
                 </FormLabel>
-                <DatePickerWithRange
-                  value={{ from: field.value, to: field.value }}
+                <DatePickerField
+                  value={field.value}
                   onChange={field.onChange}
-                  className="w-full"
                 />
                 <FormMessage />
               </FormItem>

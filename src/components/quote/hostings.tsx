@@ -53,11 +53,8 @@ const hostingSchema = z.object({
   maxChildren: z
     .string()
     .min(1, { message: "La ocupación máxima de niños es requerida" }),
-  cancellationPolicy: z
-    .string()
-    .min(1, { message: "La política de cancelación es requerida" }),
   amenities: z
-    .string()
+    .array(z.string())
     .min(1, { message: "Las amenidades destacadas son requeridas" }),
 });
 
@@ -92,12 +89,12 @@ function Hostings() {
       roomType: roomType || "",
       maxAdults: maxAdults || "2",
       maxChildren: maxChildren || "0",
-      amenities: amenities || "",
+      amenities: amenities || [],
     },
   });
 
   const { selectedBadge, toggleSelectedBadge } = useSelectBadge(
-    amenities ? amenities.split(",").map((a) => a.trim()) : []
+    amenities || []
   );
 
   const onSubmit = (data: HostingFormValues) => {
@@ -108,12 +105,9 @@ function Hostings() {
       setRoomType(data.roomType);
       setMaxAdults(data.maxAdults);
       setMaxChildren(data.maxChildren);
-
-      // Convertir las amenidades seleccionadas a string
-      const amenitiesString = selectedBadge.join(", ");
-      setAmenities(amenitiesString);
-
+      setAmenities(data.amenities);
       setCurrentStep(currentStep + 1);
+      
       toast.success("Información de hospedaje guardada correctamente");
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -251,39 +245,50 @@ function Hostings() {
           />
 
           {/* Amenidades destacadas */}
-          <FormItem className="md:col-span-2">
-            <FormLabel className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              Amenidades destacadas
-            </FormLabel>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {commonAmenities.map((amenity: Amenity) => (
-                <Badge
-                  key={amenity.id}
-                  variant={
-                    selectedBadge.includes(amenity.id) ? "default" : "outline"
-                  }
-                  className="cursor-pointer hover:bg-white/90 hover:text-black transition-colors duration-200 text-sm"
-                  onClick={() => toggleSelectedBadge(amenity.id)}
-                >
-                  {amenity.label}
-                  {selectedBadge.includes(amenity.id) && (
-                    <X className="ml-1 h-3 w-3" />
-                  )}
-                </Badge>
-              ))}
-            </div>
-            <input
-              type="hidden"
-              {...form.register("amenities")}
-              value={selectedBadge.join(", ")}
-            />
-            {form.formState.errors.amenities && (
-              <p className="text-sm font-medium text-destructive">
-                {form.formState.errors.amenities.message}
-              </p>
+          <FormField
+            control={form.control}
+            name="amenities"
+            render={({ field }) => (
+              <FormItem className="md:col-span-2">
+                <FormLabel className="flex items-center gap-2">
+                  <Star className="h-4 w-4" />
+                  Amenidades destacadas
+                </FormLabel>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {commonAmenities.map((amenity: Amenity) => (
+                    <Badge
+                      key={amenity.id}
+                      variant={
+                        selectedBadge.includes(amenity.id)
+                          ? "default"
+                          : "outline"
+                      }
+                      className="cursor-pointer hover:bg-white/90 hover:text-black transition-colors duration-200 text-sm"
+                      onClick={() => {
+                        toggleSelectedBadge(amenity.id);
+
+                        let newSelectedBadges = [...field.value];
+                        if (newSelectedBadges.includes(amenity.id)) {
+                          newSelectedBadges = newSelectedBadges.filter(
+                            (id) => id !== amenity.id
+                          );
+                        } else {
+                          newSelectedBadges.push(amenity.id);
+                        }
+                        field.onChange(newSelectedBadges);
+                      }}
+                    >
+                      {amenity.label}
+                      {selectedBadge.includes(amenity.id) && (
+                        <X className="ml-1 h-3 w-3" />
+                      )}
+                    </Badge>
+                  ))}
+                </div>
+                <FormMessage />
+              </FormItem>
             )}
-          </FormItem>
+          />
         </div>
 
         <Button type="submit" className="w-full cursor-pointer">

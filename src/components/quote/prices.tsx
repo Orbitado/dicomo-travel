@@ -26,6 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
+import { useRouter } from "next/navigation";
 
 const pricesSchema = z.object({
   serviceDescription: z
@@ -52,9 +53,9 @@ function Prices() {
     taxesIncluded,
     subtotal,
     totalQuote,
-    currentStep,
-    setCurrentStep,
   } = useStore();
+
+  const router = useRouter();
 
   const form = useForm<PricesFormValues>({
     resolver: zodResolver(pricesSchema),
@@ -90,9 +91,12 @@ function Prices() {
       setQuantity(data.quantity);
       setUnitPrice(data.unitPrice);
       setTaxesIncluded(data.taxesIncluded);
-
-      setCurrentStep(currentStep + 1);
-      toast.success("Información de precios guardada correctamente");
+      toast.success("Cotización generada correctamente", {
+        action: {
+          label: "Ver",
+          onClick: () => router.push("/quote"),
+        },
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Error al guardar la información de precios");

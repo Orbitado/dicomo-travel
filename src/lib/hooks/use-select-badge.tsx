@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-export const useSelectBadge = (badgeIds: string[]) => {
+export const useSelectBadge = (initialBadges: string[]) => {
   const [selectedBadge, setSelectedBadge] = useState<string[]>(
-    badgeIds ? badgeIds.map((a) => a.trim()) : []
+    initialBadges || []
   );
 
   const toggleSelectedBadge = (badgeId: string) => {
