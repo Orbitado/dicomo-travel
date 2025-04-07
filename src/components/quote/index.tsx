@@ -10,7 +10,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "../mode-toggle";
 import CustomerData from "./customer-data";
-import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,10 +17,11 @@ import {
 } from "@/components/ui/collapsible";
 import { useStore } from "@/store";
 import { formSections } from "./data/form-sections";
-import { ChevronDown, Eye } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Itinerary from "./itinerary";
 import Flights from "./flights";
 import Hostings from "./hostings";
+import Prices from "./prices";
 
 function Quote() {
   const { currentStep, setCurrentStep } = useStore();
@@ -72,21 +72,10 @@ function Quote() {
               {section.id === 2 && <Itinerary />}
               {section.id === 3 && <Flights />}
               {section.id === 4 && <Hostings />}
-              {section.id === 5 && (
-                <div className="py-4 text-center text-muted-foreground">
-                  Contenido de Datos de la Agencia
-                </div>
-              )}
+              {section.id === 5 && <Prices />}
             </CollapsibleContent>
           </Collapsible>
         ))}
-
-        <div className="flex justify-center pt-4">
-          <Button className="w-full max-w-md flex items-center gap-2">
-            <Eye className="h-5 w-5" />
-            Generar Cotización
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
