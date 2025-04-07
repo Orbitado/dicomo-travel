@@ -12,12 +12,17 @@ import {
   FlightDataSlice,
   createFlightDataSlice,
 } from "./slices/flight-data";
+import {
+  HostingDataSlice,
+  createHostingDataSlice,
+} from "./slices/hosting-data";
 
-export type StoreState = CustomerDataSlice & SteppersSlice & ItinerarySlice & FlightDataSlice;
+export type StoreState = CustomerDataSlice & SteppersSlice & ItinerarySlice & FlightDataSlice & HostingDataSlice;
 
 export const useStore = create<StoreState>((set) => ({
   ...createSteppersSlice(set),
   ...createCustomerDataSlice(set),
   ...createItinerarySlice(set),
   ...createFlightDataSlice(set),
+  ...createHostingDataSlice(set),
 }));

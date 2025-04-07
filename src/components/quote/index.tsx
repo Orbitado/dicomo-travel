@@ -21,6 +21,7 @@ import { formSections } from "./data/form-sections";
 import { ChevronDown, Eye } from "lucide-react";
 import Itinerary from "./itinerary";
 import Flights from "./flights";
+import Hostings from "./hostings";
 
 function Quote() {
   const { currentStep, setCurrentStep } = useStore();
@@ -70,11 +71,7 @@ function Quote() {
               {section.id === 1 && <CustomerData />}
               {section.id === 2 && <Itinerary />}
               {section.id === 3 && <Flights />}
-              {section.id === 4 && (
-                <div className="py-4 text-center text-muted-foreground">
-                  Contenido de Detalles de Precios y Condiciones
-                </div>
-              )}
+              {section.id === 4 && <Hostings />}
               {section.id === 5 && (
                 <div className="py-4 text-center text-muted-foreground">
                   Contenido de Datos de la Agencia
