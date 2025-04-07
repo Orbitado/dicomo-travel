@@ -1,11 +1,19 @@
 "use client";
 
 import React from "react";
-import { PDFViewer } from "@react-pdf/renderer";
-import QuoteDocument from "@/components/quote/quote-pdf";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const PDFQuoteViewer = dynamic(() => import("./pdf-quote-viewer"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center">
+      <p>Cargando visualizador de PDF...</p>
+    </div>
+  ),
+});
 
 export default function QuotePage() {
   const router = useRouter();
@@ -24,9 +32,7 @@ export default function QuotePage() {
       </div>
 
       <div className="h-[800px] w-full rounded-lg border bg-white shadow-sm">
-        <PDFViewer width="100%" height="100%">
-          <QuoteDocument />
-        </PDFViewer>
+        <PDFQuoteViewer />
       </div>
     </div>
   );
