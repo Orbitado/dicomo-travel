@@ -19,13 +19,11 @@ import {
   Utensils,
   Bed,
   Users,
-  CalendarX,
   Star,
   X,
 } from "lucide-react";
 import { useStore } from "@/store";
 import { Button } from "../ui/button";
-import { Textarea } from "../ui/textarea";
 import {
   Select,
   SelectContent,
@@ -34,13 +32,13 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Badge } from "../ui/badge";
-import { useState } from "react";
 import {
   mealPlans,
   commonAmenities,
   MealPlan,
   Amenity,
 } from "./data/hostings-data";
+import { useSelectBadge } from "@/lib/hooks/use-select-badge";
 
 const hostingSchema = z.object({
   hotelName: z.string().min(1, { message: "El nombre del hotel es requerido" }),
@@ -73,7 +71,6 @@ function Hostings() {
     setRoomType,
     setMaxAdults,
     setMaxChildren,
-    setCancellationPolicy,
     setAmenities,
     hotelName,
     location,
@@ -81,16 +78,10 @@ function Hostings() {
     roomType,
     maxAdults,
     maxChildren,
-    cancellationPolicy,
     amenities,
     currentStep,
     setCurrentStep,
   } = useStore();
-
-  // Estado para manejar las amenidades seleccionadas
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
-    amenities ? amenities.split(",").map((a) => a.trim()) : []
-  );
 
   const form = useForm<HostingFormValues>({
     resolver: zodResolver(hostingSchema),
@@ -101,21 +92,13 @@ function Hostings() {
       roomType: roomType || "",
       maxAdults: maxAdults || "2",
       maxChildren: maxChildren || "0",
-      cancellationPolicy: cancellationPolicy || "",
       amenities: amenities || "",
     },
   });
 
-  // Función para manejar la selección/deselección de amenidades
-  const toggleAmenity = (amenityId: string) => {
-    setSelectedAmenities((prev) => {
-      if (prev.includes(amenityId)) {
-        return prev.filter((id) => id !== amenityId);
-      } else {
-        return [...prev, amenityId];
-      }
-    });
-  };
+  const { selectedBadge, toggleSelectedBadge } = useSelectBadge(
+    amenities ? amenities.split(",").map((a) => a.trim()) : []
+  );
 
   const onSubmit = (data: HostingFormValues) => {
     try {
@@ -125,10 +108,9 @@ function Hostings() {
       setRoomType(data.roomType);
       setMaxAdults(data.maxAdults);
       setMaxChildren(data.maxChildren);
-      setCancellationPolicy(data.cancellationPolicy);
 
       // Convertir las amenidades seleccionadas a string
-      const amenitiesString = selectedAmenities.join(", ");
+      const amenitiesString = selectedBadge.join(", ");
       setAmenities(amenitiesString);
 
       setCurrentStep(currentStep + 1);
@@ -279,15 +261,13 @@ function Hostings() {
                 <Badge
                   key={amenity.id}
                   variant={
-                    selectedAmenities.includes(amenity.id)
-                      ? "default"
-                      : "outline"
+                    selectedBadge.includes(amenity.id) ? "default" : "outline"
                   }
                   className="cursor-pointer hover:bg-white/90 hover:text-black transition-colors duration-200 text-sm"
-                  onClick={() => toggleAmenity(amenity.id)}
+                  onClick={() => toggleSelectedBadge(amenity.id)}
                 >
                   {amenity.label}
-                  {selectedAmenities.includes(amenity.id) && (
+                  {selectedBadge.includes(amenity.id) && (
                     <X className="ml-1 h-3 w-3" />
                   )}
                 </Badge>
@@ -296,7 +276,7 @@ function Hostings() {
             <input
               type="hidden"
               {...form.register("amenities")}
-              value={selectedAmenities.join(", ")}
+              value={selectedBadge.join(", ")}
             />
             {form.formState.errors.amenities && (
               <p className="text-sm font-medium text-destructive">
@@ -305,28 +285,6 @@ function Hostings() {
             )}
           </FormItem>
         </div>
-
-        {/* Política de cancelación */}
-        <FormField
-          control={form.control}
-          name="cancellationPolicy"
-          render={({ field }) => (
-            <FormItem className="md:col-span-2">
-              <FormLabel className="flex items-center gap-2">
-                <CalendarX className="h-4 w-4" />
-                Política de cancelación
-              </FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Ej. Cancelación gratuita hasta 24 horas antes de la llegada"
-                  className="min-h-[80px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         <Button type="submit" className="w-full cursor-pointer">
           <ArrowRight className="h-4 w-4" />
